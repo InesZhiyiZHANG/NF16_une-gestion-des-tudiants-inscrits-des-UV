@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1701468231 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_04\main.c
+	<stdio.h>
+	<stdlib.h>
+	"TP04.h"
+
+1701469175 d:\program files (x86)\codeblocks\tp\projet\nf16_tp_04\tp04.h
+
