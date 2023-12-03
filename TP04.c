@@ -22,7 +22,9 @@ T_Element * creerInscription( char * code) {
 }
 
 //ajouter un élément dans une liste d’inscriptions à des UV
-T_Element * ajouterInscription(T_Element *liste, char* code){
+
+
+T_Element * ajouterInscription(char * nom , char * prenom ,T_Element* liste, char* code){
     T_Element *ajout = creerInscription(code);
     if (!ajout) {
         printf("Erreur d'allocation de mémoire.\n");
@@ -30,6 +32,7 @@ T_Element * ajouterInscription(T_Element *liste, char* code){
     }
 
     T_Element *tete = liste;
+    T_Element *pre = NULL;
 
     if (tete == NULL || strcmp(tete->code_uv, code) > 0) {
         ajout->suivant = tete;
@@ -38,18 +41,23 @@ T_Element * ajouterInscription(T_Element *liste, char* code){
 
     int compare = strcmp(tete->code_uv, code);
 
+
     while (tete->suivant != NULL && compare < 0) {
+        pre = tete;
         tete = tete->suivant;
         compare = strcmp(tete->code_uv, code);
     }
-
     if (compare == 0) {
-        printf("UV %s deja existe!\n" , tete->code_uv );
+        printf("pour l'etu [%s %s] : UV %s deja existe!\nVeuillez ne pas vous inscrire plus d'une fois!\n\n" ,nom , prenom , tete->code_uv );
         free(ajout->code_uv);
         free(ajout);
-    } else {
-        ajout->suivant = tete->suivant;
-        tete->suivant = ajout;
+    }
+    else if( compare < 0){
+        tete->suivant = ajout;//处在最后一个退出是因为第一个条件退出的
+    }
+    else{
+        pre->suivant = ajout;
+        ajout->suivant = tete;
     }
 
     return liste;
@@ -77,7 +85,7 @@ int comparer_Etu( T_Noeud* etu , char* nom, char* prenom)
 T_Noeud * chercher_Etu(T_Arbre abr, char* nom, char* prenom)
 {
     if (abr == NULL || comparer_Etu(abr , nom , prenom) == 0)
-        return abr;
+        return abr;//该同学处于树的头部位置或者树中无元素
 
     if ( comparer_Etu(abr , nom , prenom) < 0 )
         return chercher_Etu(abr->filsGauche , nom , prenom);
@@ -118,11 +126,6 @@ T_Arbre ajouterEtuRec(T_Noeud* arbre, T_Noeud* ajoutetu) {
         return arbre;
     }
 
-//    if (compare > 0) {
-//        ajoutetu->filsGauche = ajouterEtuRec(arbre->filsGauche, ajoutetu);
-//    } else {
-//        ajoutetu->filsDroit = ajouterEtuRec(arbre->filsDroit, ajoutetu);
-//    }
 
     if (compare > 0) {
         arbre->filsDroit = ajouterEtuRec(arbre->filsDroit, ajoutetu);
@@ -146,7 +149,7 @@ T_Arbre inscrire(T_Arbre abr, char* nom, char* prenom, char* code)
     }
     else //l’étudiant est dans l’ABR
     {
-        etu->listeInscriptions = ajouterInscription(etu->listeInscriptions , code);
+        etu->listeInscriptions = ajouterInscription(nom , prenom ,etu->listeInscriptions , code);
     }
     return abr ;
 }
@@ -168,20 +171,16 @@ T_Arbre chargerFichier(T_Arbre abr, char *filename){
     nbligne = 1;
     while(fgets(ligne , sizeof(ligne) , fichier) != NULL){
 
-        nbbloc = sscanf(ligne , "«%[^;];%[^;];%[^»]" , prenom , nom , code);
+        //nbbloc = sscanf(ligne , "«%[^;];%[^;];%[^»]»" , prenom , nom , code);
+        nbbloc = sscanf(ligne, "<<%[^;];%[^;];%[^>>]>>", nom , prenom , code);
         if(nbbloc == 3){
-            T_Noeud * ajoutetu = creerEtu(prenom , nom ,code);
-            //检查这个文档里要添加的同学是否存在
-            if(chercher_Etu(abr, nom , prenom) == NULL){//该同学不存在
-                ajouterEtuRec(abr, ajoutetu);
-            }
-            else{//该同学存在，所以只更新uvliste
-                T_Noeud * existe_etu = chercher_Etu( abr , nom , prenom);
-                ajouterInscription( existe_etu->listeInscriptions , code);
-            }
+            abr = inscrire(abr, nom, prenom, code);
+            //printf("%s %s %s\n",(abr)->nom , abr->prenom ,code);
+
+
         }
         else{
-            printf("le %d eme ligne n'est pas valide!\n" , nbligne);
+            printf("le %d eme ligne pour l'etu  n'est pas valide!\n" , nbligne);
         }
         nbligne++;
 
@@ -203,7 +202,7 @@ void afficherEtuInfo(T_Noeud* etu)
     if(etu) //si le nœud de T_Noeud « etu » n'est pas vide
     {
         T_Element* UV = etu->listeInscriptions;
-        printf("[%s %s] : ", etu->nom, etu->prenom);
+        printf("[%8s %8s] : ", etu->nom, etu->prenom);
         while(UV) //tant que le nœud de T_Element « UV » n'est pas vide
         {
             printf("%s    ", UV->code_uv);
@@ -221,7 +220,7 @@ void afficherInscriptions(T_Arbre abr)
     {
         afficherInscriptions(abr->filsGauche);
         afficherEtuInfo(abr);
-        printf("\n");
+        printf("\n\n");
         afficherInscriptions(abr->filsDroit);
     }
 }

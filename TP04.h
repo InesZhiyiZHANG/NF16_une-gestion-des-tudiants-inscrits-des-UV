@@ -61,7 +61,8 @@ typedef T_Noeud * T_Arbre;
 
 T_Noeud * creerEtu(char * prenom , char * nom , char * code);
 
-T_Element * ajouterInscription(T_Element* liste, char* code);
+T_Element * ajouterInscription(char * nom , char * prenom ,T_Element* liste, char* code);
+
 
 /*----------------------------------------------------------------------------------------------------*/
 

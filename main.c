@@ -4,9 +4,32 @@
 
 int main()
 {
-/*测试添加liste
+
+
+    /*char choix = '0';
+    while (choix != '8') {
+        printf("\n\n\n\n============================================================");
+        printf("\n1. Afficher la liste des blocs de la BlockChain");
+        printf("\n2. Afficher toutes les transactions d'un bloc");
+        printf("\n3. Afficher toutes les transactions du jour pour un etudiant");
+        printf("\n4. Afficher l'historique pour un etudiant");
+        printf("\n5. Crediter un compte");
+        printf("\n6. Payer un repas");
+        printf("\n7. Transferer des EATCoins entre deux etudiants");
+        printf("\n8. Quitter");
+        printf("\n9. Ajouter un nouveau data");
+        printf("\n============================================================");
+        printf("\n>>La date du jour : %s, blockID : %d\n", ma_chaine_de_blocs->dateBloc, ma_chaine_de_blocs->idBloc);
+        printf("\nVotre choix ? ");
+
+        choix = getchar();
+
+        switch (choix) {*/
+
+
 /***************************************************************/
-    T_Element *liste = NULL;
+   /* 测试添加liste
+   T_Element *liste = NULL;
 
 
     liste = ajouterInscription(liste, "CSE101");
@@ -27,33 +50,20 @@ int main()
         T_Element *temp = courant;
         courant = courant->suivant;
         free(temp);
-    }
+    }*/
 //*********************************************************************//
    T_Arbre abr = NULL; // 初始化一个空树
+   abr = chargerFichier(abr, "etu_list.txt");
+    //printf("%s",abr->prenom);
+   printf("\n\n--------------------------------------------------\n\n");
+    printf("[FONCTION afficherInscriptions]\n\n");
+    afficherInscriptions(abr);
+    if(abr == NULL){
+        printf("!!!!!!!!!!!!!!\nvide!\n");
+    }
 
     // 测试1：添加学生及其注册
-    abr = inscrire(abr, "Doe", "John", "CSE101");
-    abr = inscrire(abr, "Doe", "John", "PHY301");
-    abr = inscrire(abr, "Doe", "John", "PHY157");
-    abr = inscrire(abr, "Doe", "John", "BIO501");
-    abr = inscrire(abr, "Johnson", "Alice", "CSE101");
-    abr = inscrire(abr, "Johnson", "Alice", "BIO501");
-    abr = inscrire(abr, "Tom", "Effos", "MAT091");
-    abr = inscrire(abr, "Tom", "Effos", "ENG159");
-    abr = inscrire(abr, "Bott", "Emmy", "POL291");
-    abr = inscrire(abr, "Bott", "Emmy", "CHN558");
-    abr = inscrire(abr, "Bott", "Emmy", "HIT102");
-    abr = inscrire(abr, "Smith", "Jane", "MAT201");
-    abr = inscrire(abr, "Dupond", "Marcel", "MCH102");
-    abr = inscrire(abr, "Dupont", "Albert", "GEO712");
-    abr = inscrire(abr, "Martin", "Jacques", "MCH102");
-    abr = inscrire(abr, "Martin", "Jacques", "ENG112");
-    abr = inscrire(abr, "Fac", "Kittel", "BIO501");
-    abr = inscrire(abr, "Fac", "Kittel", "ART130");
-    abr = inscrire(abr, "Zackin", "Zoma", "BIO501");
-    abr = inscrire(abr, "Zackin", "Zoma", "ENG112");
 
-    T_Noeud *etu = NULL;
 
 //    // 输出单个学生信息（测试函数[afficherEtuInfo]）
 //    printf("--------------------------------------------------\n\n");
@@ -62,9 +72,6 @@ int main()
 //    afficherEtuInfo(etu);
 
     //输出全体学生的课程信息（测试函数[afficherInscriptions]）
-    printf("\n\n--------------------------------------------------\n\n");
-    printf("[FONCTION afficherInscriptions]\n\n");
-    afficherInscriptions(abr);
 
 //    //查看学生是否注册了某一课程（测试函数[rechercherUVdEtu]）
 //    printf("\n\n--------------------------------------------------\n\n");

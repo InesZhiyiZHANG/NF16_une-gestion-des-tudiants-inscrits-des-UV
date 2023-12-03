@@ -34,3 +34,17 @@
 	<math.h>
 	"TP04.h"
 
+1701613853 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.3\nf16_tp_04\main.c
+	<stdio.h>
+	<stdlib.h>
+	"TP04.h"
+
+1701614223 d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.3\nf16_tp_04\tp04.h
+
+1701614750 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.3\nf16_tp_04\tp04.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	"TP04.h"
+
