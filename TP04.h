@@ -22,12 +22,7 @@ typedef struct Noeud{
 
 typedef T_Noeud * T_Arbre;
 
-
 /*----------------------------------------------------------------------------------------------------*/
-
-
-
-
 
 /*T_Arbre ajouterEtu(T_Arbre arbre, T_Noeud * ajoutetu){
 
@@ -66,7 +61,6 @@ typedef T_Noeud * T_Arbre;
 
 T_Noeud * creerEtu(char * prenom , char * nom , char * code);
 
-
 T_Element * ajouterInscription(T_Element* liste, char* code);
 
 /*----------------------------------------------------------------------------------------------------*/
@@ -81,33 +75,15 @@ T_Noeud* chercher_Etu(T_Arbre abr, char* nom, char* prenom);
 
 T_Arbre ajouterEtuRec(T_Noeud* arbre, T_Noeud* ajoutetu);
 
-
-
 T_Arbre inscrire(T_Arbre abr, char* nom, char* prenom, char* code);
 
-
 /*----------------------------------------------------------------------------------------------------*/
-
 
 T_Arbre chargerFichier(T_Arbre abr, char *filename);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*----------------------------------------------------------------------------------------------------*/
 
-void afficherEtusInfo(T_Noeud* etu);
-
+void afficherEtuInfo(T_Noeud* etu);
 
 /*----------------------------------------------------------------------------------------------------*/
 
@@ -117,37 +93,37 @@ void afficherInscriptions(T_Arbre abr);
 
 int rechercherUVdEtus(T_Noeud* etu, char *code);
 
-
-
 /*----------------------------------------------------------------------------------------------------*/
 
 void afficherInscriptionsUV(T_Arbre abr, char *code);
-
 
 /*----------------------------------------------------------------------------------------------------*/
 
 T_Noeud* obtenirEtu(T_Arbre abr, char *nom, char *prenom);
 
-
 /*----------------------------------------------------------------------------------------------------*/
 
 T_Noeud* obtenirMinimumEtu(T_Noeud* etu);
-
 
 /*----------------------------------------------------------------------------------------------------*/
 
 T_Noeud* obtenirParent(T_Arbre abr, char *nom, char *prenom);
 
-
 /*----------------------------------------------------------------------------------------------------*/
 
 T_Noeud* obtenirSuccesseur(T_Arbre abr, T_Noeud* etu);
-
 
 /*----------------------------------------------------------------------------------------------------*/
 
 T_Arbre supprimerInscription(T_Arbre abr, char *nom, char *prenom, char *code);
 
+/*----------------------------------------------------------------------------------------------------*/
+
+T_Arbre supprimerTousLesInscriptions(T_Arbre abr, char* nom, char* prenom);
+
+/*----------------------------------------------------------------------------------------------------*/
+
+T_Arbre libererArbre(T_Arbre abr);
 
 /*----------------------------------------------------------------------------------------------------*/
 
