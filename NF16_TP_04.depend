@@ -6,12 +6,13 @@
 
 1701469175 d:\program files (x86)\codeblocks\tp\projet\nf16_tp_04\tp04.h
 
-1701554627 source:d:\文件及其他\06、編程項目\c_project\nf16_tp\nf16_tp_04\main.c
+1701722649 source:d:\文件及其他\06、編程項目\c_project\nf16_tp\nf16_tp_04\main.c
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
 	"TP04.h"
 
-1701552855 d:\文件及其他\06、編程項目\c_project\nf16_tp\nf16_tp_04\tp04.h
+1701720113 d:\文件及其他\06、編程項目\c_project\nf16_tp\nf16_tp_04\tp04.h
 
 1701529583 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_04(1)\nf16_tp_04\main.c
 	<stdio.h>
@@ -27,7 +28,7 @@
 	<math.h>
 	"TP04.h"
 
-1701554586 source:d:\文件及其他\06、編程項目\c_project\nf16_tp\nf16_tp_04\tp04.c
+1701722628 source:d:\文件及其他\06、編程項目\c_project\nf16_tp\nf16_tp_04\tp04.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -42,6 +43,21 @@
 1701614223 d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.3\nf16_tp_04\tp04.h
 
 1701614750 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.3\nf16_tp_04\tp04.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	"TP04.h"
+
+1701693642 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.4\nf16_tp_04\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"TP04.h"
+
+1701693651 d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.4\nf16_tp_04\tp04.h
+
+1701693839 source:d:\program files (x86)\codeblocks\tp\projet\nf16_tp_0412.4\nf16_tp_04\tp04.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

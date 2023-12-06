@@ -27,7 +27,7 @@ T_Element * creerInscription( char * code) {
 T_Element * ajouterInscription(char * nom , char * prenom ,T_Element* liste, char* code){
     T_Element *ajout = creerInscription(code);
     if (!ajout) {
-        printf("Erreur d'allocation de mémoire.\n");
+        printf("\n> Erreur d'allocation de memoire.\n");
         return NULL;
     }
 
@@ -48,7 +48,7 @@ T_Element * ajouterInscription(char * nom , char * prenom ,T_Element* liste, cha
         compare = strcmp(tete->code_uv, code);
     }
     if (compare == 0) {
-        printf("pour l'etu [%s %s] : UV %s deja existe!\nVeuillez ne pas vous inscrire plus d'une fois!\n\n" ,nom , prenom , tete->code_uv );
+        printf("\n: [%s %s] est deja inscrit a la UV [%s]\n  Veuillez ne pas vous inscrire plus d'une fois!\n" ,nom , prenom , tete->code_uv );
         free(ajout->code_uv);
         free(ajout);
     }
@@ -122,7 +122,7 @@ T_Arbre ajouterEtuRec(T_Noeud* arbre, T_Noeud* ajoutetu) {
     int compare = comparer_Etu(arbre, ajoutetu->nom, ajoutetu->prenom);
 
     if (compare == 0) {
-        printf("L'etudiant existe deja!!!\n");
+        printf("  L'etudiant existe deja!!\n");
         return arbre;
     }
 
@@ -156,6 +156,18 @@ T_Arbre inscrire(T_Arbre abr, char* nom, char* prenom, char* code)
 
 /*----------------------------------------------------------------------------------------------------*/
 
+void convertmaj(char * str){
+    char * p = str;
+    int i;
+    for(i=0 ; i < strlen(str) ;i++){
+        if( p[i] <= 'z' && p[i] >= 'a'){
+            p[i] = p[i] - 'a' + 'A';
+        }
+    }
+}
+
+
+
 //charger dans l’ABR un fichier texte comportant une liste d’inscriptions
 T_Arbre chargerFichier(T_Arbre abr, char *filename){
     FILE * fichier = fopen(filename , "r");
@@ -163,36 +175,31 @@ T_Arbre chargerFichier(T_Arbre abr, char *filename){
     char nom[20] , prenom[20] , code[10];
     int nbbloc , nbligne;
     if(fichier == NULL){
-        perror("Erreur d'ouvrir\n");
+        perror("\n: Echec du chargement du fichier.\n");
         return abr;
     }
 
     char ligne[100];
     nbligne = 1;
-    while(fgets(ligne , sizeof(ligne) , fichier) != NULL){
 
+    while(fgets(ligne , sizeof(ligne) , fichier) != NULL){
         //nbbloc = sscanf(ligne , "«%[^;];%[^;];%[^»]»" , prenom , nom , code);
-        nbbloc = sscanf(ligne, "<<%[^;];%[^;];%[^>>]>>", nom , prenom , code);
+        nbbloc = sscanf(ligne, "%[^;];%[^;];%[^\n]", nom , prenom , code);
+        convertmaj(nom);
+        convertmaj(prenom);
+        convertmaj(code);
         if(nbbloc == 3){
             abr = inscrire(abr, nom, prenom, code);
             //printf("%s %s %s\n",(abr)->nom , abr->prenom ,code);
-
-
         }
         else{
-            printf("le %d eme ligne pour l'etu  n'est pas valide!\n" , nbligne);
+            printf("\n: Le %deme ligne pour l'etudiant n'est pas valide!\n" , nbligne);
         }
         nbligne++;
-
-
     }
+    printf("\n> Fichier [%s] charge avec succes.\n", filename);
     return abr;
 }
-
-
-
-
-
 
 /*----------------------------------------------------------------------------------------------------*/
 
@@ -202,7 +209,7 @@ void afficherEtuInfo(T_Noeud* etu)
     if(etu) //si le nœud de T_Noeud « etu » n'est pas vide
     {
         T_Element* UV = etu->listeInscriptions;
-        printf("[%8s %8s] : ", etu->nom, etu->prenom);
+        printf("[ %-8s %-8s ] : ", etu->nom, etu->prenom);
         while(UV) //tant que le nœud de T_Element « UV » n'est pas vide
         {
             printf("%s    ", UV->code_uv);
@@ -220,7 +227,7 @@ void afficherInscriptions(T_Arbre abr)
     {
         afficherInscriptions(abr->filsGauche);
         afficherEtuInfo(abr);
-        printf("\n\n");
+        printf("\n");
         afficherInscriptions(abr->filsDroit);
     }
 }
@@ -236,9 +243,7 @@ int rechercherUVdEtu(T_Noeud* etu, char* code)
         while(UV) //tant que le nœud de T_Element « UV » n'est pas vide
         {
             if(!strcmp(UV->code_uv, code)) //si les chaînes de caractères « UV->code_uv » et « code » sont identiques
-            {
                 return 1;
-            }
             UV = UV->suivant;
         }
     }
@@ -248,16 +253,17 @@ int rechercherUVdEtu(T_Noeud* etu, char* code)
 /*----------------------------------------------------------------------------------------------------*/
 
 //afficher l’ensemble des étudiants inscrits à une UV de code « code »
-void afficherInscriptionsUV(T_Arbre abr, char* code)
+void afficherInscriptionsUV(T_Arbre abr, char* code, char* p_indicateur)
 {
     if(abr) //si  le nœud de T_Arbre « abr » n'est pas vide
     {
-        afficherInscriptionsUV(abr->filsGauche, code);
+        afficherInscriptionsUV(abr->filsGauche, code, p_indicateur);
         if(rechercherUVdEtu(abr, code))
         {
-            printf("%s %s\n", abr->nom, abr->prenom);
+            printf("  %s %s\n", abr->nom, abr->prenom);
+            *p_indicateur = 1; //Il y a des étudiants inscrits à cette UV
         }
-        afficherInscriptionsUV(abr->filsDroit, code);
+        afficherInscriptionsUV(abr->filsDroit, code, p_indicateur);
     }
 }
 
@@ -267,12 +273,8 @@ void afficherInscriptionsUV(T_Arbre abr, char* code)
 T_Noeud* obtenirMinimumEtu(T_Noeud* etu)
 {
     if(etu) //si le nœud de T_Noeud « etu » n'est pas vide
-    {
         while(etu->filsGauche)
-        {
             etu = etu->filsGauche;
-        }
-    }
     return etu;
 }
 
@@ -297,20 +299,16 @@ T_Noeud* obtenirParent(T_Arbre abr, char* nom, char* prenom)
         cmpPrenomD = strcmp(abr->filsDroit->prenom, prenom);
     }
     if(((cmpNomG == 0) && (cmpPrenomG == 0)) || ((cmpNomD == 0) && (cmpPrenomD == 0)))
-    {
         return abr;
-    }
+
     //Vérification récursive des sous-arbres de gauche et de droite
     T_Noeud* resultatGauche = NULL;
     T_Noeud* resultatDroit = NULL;
     if(abr->filsGauche)
-    {
         resultatGauche = obtenirParent(abr->filsGauche, nom, prenom);
-    }
     if(abr->filsDroit)
-    {
         resultatDroit = obtenirParent(abr->filsDroit, nom, prenom);
-    }
+
     return (resultatGauche) ? resultatGauche : resultatDroit;
 }
 
@@ -322,9 +320,8 @@ T_Noeud* obtenirSuccesseur(T_Arbre abr, T_Noeud* etu)
     if(abr && etu) //si le nœud de T_Arbre « abr » et le nœud de T_Noeud « etu » ne sont pas vides
     {
         if(etu->filsDroit) //si le nœud de T_Noeud « etu » possède un fils droit
-        {
             return obtenirMinimumEtu(etu->filsDroit);
-        }
+
         T_Noeud* parent = obtenirParent(abr, etu->nom, etu->prenom);
         while(parent && (etu == parent->filsDroit))
         {
@@ -338,8 +335,8 @@ T_Noeud* obtenirSuccesseur(T_Arbre abr, T_Noeud* etu)
 
 /*----------------------------------------------------------------------------------------------------*/
 
-//supprimer l’inscription d’un étudiant à une UV
-T_Arbre supprimerInscription(T_Arbre abr, char* nom, char* prenom, char* code)
+//supprimer l'inscription d'un étudiant à une UV
+T_Arbre supprimerInscription(T_Arbre abr, char* nom, char* prenom, char* code, char* p_indicateur)
 {
     if(abr) //si le nœud de T_Arbre « abr » n'est pas vide
     {
@@ -355,13 +352,13 @@ T_Arbre supprimerInscription(T_Arbre abr, char* nom, char* prenom, char* code)
                     if(!strcmp(UV->code_uv, code)) //si  les chaînes de caractères « UV->code_uv » et « code » sont identiques
                     {
                         if(UV_pre == UV)
-                        {
                             etu->listeInscriptions = UV->suivant;
-                        }
                         UV_pre->suivant = UV->suivant;
                         free(UV);
+                        *p_indicateur = 1; //L'étudiant s'est inscrit  à cette UV
                         break;
                     }
+
                     UV_pre = UV;
                     UV = UV->suivant;
                 }
@@ -371,26 +368,18 @@ T_Arbre supprimerInscription(T_Arbre abr, char* nom, char* prenom, char* code)
                 T_Noeud* parent = obtenirParent(abr, etu->nom, etu->prenom);
                 int position = -1; //-1 : « etu » n'a pas de parent //0 : « etu » est fils gauche de « parent » //1 : « etu » est fils droit de « parent »
                 if(parent) //si le nœud de T_Noeud « etu » possède un parent « parent »
-                {
                      position = (parent->filsGauche == etu) ? 0 : 1;
-                }
                 if(!(etu->filsGauche || etu->filsDroit)) //si le nœud de T_Noeud « etu » n'a pas de fils
                 {
                     if(parent) //si le nœud de T_Noeud « etu » possède un parent « parent »
                     {
                         if(parent->filsGauche == etu)
-                        {
                             parent->filsGauche = NULL;
-                        }
                         else
-                        {
                             parent->filsDroit = NULL;
-                        }
                     }
                     else
-                    {
                         abr = NULL;
-                    }
                     free(etu);
                 }
                 else if((etu->filsGauche && !etu->filsDroit) || (!etu->filsGauche && etu->filsDroit)) //si le nœud de T_Noeud « etu » n'a qu'un seul fils
@@ -398,19 +387,13 @@ T_Arbre supprimerInscription(T_Arbre abr, char* nom, char* prenom, char* code)
                     T_Noeud* fils = (etu->filsGauche) ? etu->filsGauche : etu->filsDroit;
                     if(parent)
                     {
-                        if(position) //si « etu » est fils gauche de « parent »
-                        {
-                            parent->filsGauche = fils;
-                        }
-                    else //si « etu » est fils droit de « parent »
-                        {
+                        if(position) //si « etu » est fils droit de « parent »
                             parent->filsDroit = fils;
-                        }
+                        else //si « etu » est fils gauche de « parent »
+                            parent->filsGauche = fils;
                     }
                     else
-                    {
                         abr = fils;
-                    }
                     free(etu);
                 }
                 else //si le nœud de T_Noeud « etu » possède deux fils
@@ -418,13 +401,9 @@ T_Arbre supprimerInscription(T_Arbre abr, char* nom, char* prenom, char* code)
                     T_Noeud* successeur = obtenirSuccesseur(abr, etu);
                     T_Noeud* parent_successeur = obtenirParent(abr, successeur->nom, successeur->prenom);
                     if(parent_successeur->filsGauche == successeur)
-                    {
                         parent_successeur->filsGauche = successeur->filsDroit;
-                    }
                     else
-                    {
                         parent_successeur->filsDroit = successeur->filsDroit;
-                    }
                     etu->nom = successeur->nom;
                     etu->prenom = successeur->prenom;
                     etu->listeInscriptions = successeur->listeInscriptions;
@@ -444,16 +423,16 @@ T_Arbre supprimerTousLesInscriptions(T_Arbre abr, char* nom, char* prenom)
     if(etu) //si le nœud de T_Noeud « etu » n'est pas vide
     {
         T_Element* UV = etu->listeInscriptions;
-        int longeur = 0;
+        int longueur = 0;
         while(UV) //tant que le nœud de T_Element « UV » n'est pas vide
         {
-            longeur += 1;
+            longueur += 1;
             UV = UV->suivant;
         }
-        for(int i = longeur; i > 0; i -= 1)
-        {
-            abr = supprimerInscription(abr, nom, prenom, etu->listeInscriptions->code_uv);
-        }
+        char tmpChar = 0;
+        char* p_tmpChar = &tmpChar;
+        for(int i = longueur; i > 0; i -= 1)
+            abr = supprimerInscription(abr, nom, prenom, etu->listeInscriptions->code_uv, p_tmpChar);
     }
     return abr;
 }
@@ -463,10 +442,18 @@ T_Arbre supprimerTousLesInscriptions(T_Arbre abr, char* nom, char* prenom)
 T_Arbre libererArbre(T_Arbre abr)
 {
     while(abr) //tant que le nœud de T_Arbre « abr » n'est pas vide
-    {
         abr = supprimerTousLesInscriptions(abr, abr->nom, abr->prenom);
-    }
     return NULL;
+}
+
+/*----------------------------------------------------------------------------------------------------*/
+
+ // Vider le buffer (utile quand on utlise des getchar() )
+void viderBuffer()
+{
+    int c = 0;
+    while (c != '\n' && c != EOF)
+        c = getchar();
 }
 
 /*----------------------------------------------------------------------------------------------------*/

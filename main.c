@@ -1,187 +1,299 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "TP04.h"
 
 int main()
 {
+    T_Arbre abr = NULL; // Initialiser un arbre vide
+    T_Noeud* etu = NULL; // Initialiser un etudiant vide
+    char indicateur = 0;
+    char* p_indicateur = &indicateur;
 
+//    abr = chargerFichier(abr, "etu_list.txt"); ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /*char choix = '0';
-    while (choix != '8') {
-        printf("\n\n\n\n============================================================");
-        printf("\n1. Afficher la liste des blocs de la BlockChain");
-        printf("\n2. Afficher toutes les transactions d'un bloc");
-        printf("\n3. Afficher toutes les transactions du jour pour un etudiant");
-        printf("\n4. Afficher l'historique pour un etudiant");
-        printf("\n5. Crediter un compte");
-        printf("\n6. Payer un repas");
-        printf("\n7. Transferer des EATCoins entre deux etudiants");
-        printf("\n8. Quitter");
-        printf("\n9. Ajouter un nouveau data");
+//    printf("%s",abr->prenom);
+//    printf("\n\n--------------------------------------------------\n\n");
+//    printf("[FONCTION afficherInscriptions]\n\n");
+//    afficherInscriptions(abr);
+//    printf("\n");
+//    if(abr == NULL){
+//        printf("!!!!!!!!!!!!!!\nvide!\n");
+//    }
+
+    char choix = '0';
+    while (choix != '6')
+    {
         printf("\n============================================================");
-        printf("\n>>La date du jour : %s, blockID : %d\n", ma_chaine_de_blocs->dateBloc, ma_chaine_de_blocs->idBloc);
+        printf("\n1. Inscrire un etudiant a une UV");
+        printf("\n2. Charger un fichier d'inscriptions");
+        printf("\n3. Afficher tous les etudiants");
+        printf("\n4. Afficher les inscrits a une UV");
+        printf("\n5. Supprimer une inscription");
+        printf("\n6. Quitter");
+        printf("\n============================================================");
         printf("\nVotre choix ? ");
-
         choix = getchar();
 
-        switch (choix) {*/
-
+        switch (choix)
+        {
+            case '1':
+            {
+                char* nom[50], prenom[50], code[6];
+                printf("\n> Entrez le nom et le prenom de l'etudiant(e) et puis l'UV a inscrire : ");
+                scanf("%s %s %s", nom, prenom, code);
+                convertmaj(nom);
+                convertmaj(prenom);
+                convertmaj(code);
+                abr = inscrire(abr, nom, prenom, code);
+                if(abr) //si le nÅ“ud de T_Arbre Â« abr Â» n'est pas vide
+                    printf("> Inscription reussie de [%s %s] a la UV [%s].\n\n\n\n", nom, prenom, code);
+                else
+                    printf("> Echec de l'inscription.\n\n\n\n");
+                break;
+            }
+            case '2':
+            {
+                char* fichier[100];
+                printf("\n> Saisissez le nom du fichier : ");
+                scanf("%s", fichier);
+                abr = chargerFichier(abr, fichier);
+                printf("\n\n\n");
+                break;
+            }
+            case '3':
+            {
+                printf("\n> %-8s %-8s     %-8s\n\n", "NOM", "PRENOM", "CODE DE UV");
+                if(abr) //si le nÅ“ud de T_Arbre Â« abr Â» n'est pas vide
+                    afficherInscriptions(abr);
+                else
+                    printf("  %-8s %-8s     %-8s\n", "*VIDE*", "*VIDE*", "*VIDE*");
+                printf("\n\n\n");
+                break;
+            }
+            case '4':
+            {
+                if(abr) //si le nÅ“ud de T_Arbre Â« abr Â» n'est pas vide
+                {
+                    char* code[6];
+                    printf("\n> Saisissez le code d'UV : ");
+                    scanf("%s", code);
+                    printf("\n");
+                    convertmaj(code);
+                    indicateur = 0; //Enregistrer si il y a des Ã©tudiants inscrits Ã  cette UV
+                    afficherInscriptionsUV(abr, code, p_indicateur);
+                    if(!indicateur) //Si il n'y a pas d'Ã©tudiants inscrits Ã  cette UV
+                    {
+                        printf("> Il n'y a pas d'etudiants inscrits a cette UV.\n");
+                        indicateur = 0; //RÃ©initialisation de l'indicateur
+                    }
+                    printf("\n\n\n");
+                }
+                else
+                    printf("\n> Aucun resultat.\n\n\n\n");
+                break;
+            }
+            case '5':
+            {
+                if(abr) //si le nÅ“ud de T_Arbre Â« abr Â» n'est pas vide
+                {
+                    char* nom[50], prenom[50], code[6];
+                    printf("\n> Entrez le nom et le prenom de l'etudiant(e) et puis l'UV a Supprimer : ");
+                    scanf("%s %s %s", nom, prenom, code);
+                    convertmaj(nom);
+                    convertmaj(prenom);
+                    convertmaj(code);
+                    etu = chercher_Etu(abr, nom, prenom);
+                    if(etu) //si le nÅ“ud de T_Noeud Â« etu Â» n'est pas vide
+                    {
+                        indicateur = 0; //Enregistrez si l'Ã©tudiant est inscrit Ã  cette UV
+                        abr = supprimerInscription(abr, nom, prenom, code, p_indicateur);
+                        if(!indicateur) //L'Ã©tudiant n'est pas inscrit Ã  cette UV
+                        {
+                            printf("> [%s %s] n'est pas inscrit a la UV [%s].\n\n\n\n", nom, prenom, code);
+                            indicateur = 0; //RÃ©initialisation de l'indicateur
+                        }
+                        else
+                            printf("> Suppression reussie de [%s %s] de la UV [%s].\n\n\n\n", nom, prenom, code);
+                    }
+                    else
+                        printf("> Aucune trace de l'etudiant nomme %s %s.\n\n\n\n", nom, prenom);
+                }
+                else
+                    printf("\n> Echec de la suppression.\n\n\n\n");
+                break;
+            }
+            case '6':
+            {
+                if(abr) //si le nÅ“ud de T_Arbre Â« abr Â» n'est pas vide
+                    abr = libererArbre(abr);
+                printf("\n> La memoire allouee dynamiquement a ete liberee avec succes.\n\n\n\n");
+                break;
+            }
+            default: printf("\nERREUR : Votre choix est invalide !\n\n\n\n");
+        }
+        viderBuffer();
+    }
 
 /***************************************************************/
-   /* ²âÊÔÌí¼Óliste
+   /* æµ‹è¯•æ·»åŠ liste
    T_Element *liste = NULL;
-
 
     liste = ajouterInscription(liste, "CSE101");
     liste = ajouterInscription(liste, "MAT201");
     liste = ajouterInscription(liste, "PHY301");
-    liste = ajouterInscription(liste, "CSE101");  // ÖØ¸´µÄ UV
+    liste = ajouterInscription(liste, "CSE101");  // é‡å¤çš„ UV
 
-    // ´òÓ¡ÁĞ±íÄÚÈİ
+    // æ‰“å°åˆ—è¡¨å†…å®¹
     T_Element *courant = liste;
     while (courant != NULL) {
         printf("%s ", courant->code_uv);
         courant = courant->suivant;
     }
 
-    // ÊÍ·ÅÁĞ±íÄÚ´æ
+    // é‡Šæ”¾åˆ—è¡¨å†…å­˜
     courant = liste;
     while (courant != NULL) {
         T_Element *temp = courant;
         courant = courant->suivant;
         free(temp);
     }*/
+
 //*********************************************************************//
-   T_Arbre abr = NULL; // ³õÊ¼»¯Ò»¸ö¿ÕÊ÷
-   abr = chargerFichier(abr, "etu_list.txt");
-    //printf("%s",abr->prenom);
-   printf("\n\n--------------------------------------------------\n\n");
-    printf("[FONCTION afficherInscriptions]\n\n");
-    afficherInscriptions(abr);
-    if(abr == NULL){
-        printf("!!!!!!!!!!!!!!\nvide!\n");
-    }
 
-    // ²âÊÔ1£ºÌí¼ÓÑ§Éú¼°Æä×¢²á
-
-
-//    // Êä³öµ¥¸öÑ§ÉúĞÅÏ¢£¨²âÊÔº¯Êı[afficherEtuInfo]£©
+//    // è¾“å‡ºå•ä¸ªå­¦ç”Ÿä¿¡æ¯ï¼ˆæµ‹è¯•å‡½æ•°[afficherEtuInfo]ï¼‰
 //    printf("--------------------------------------------------\n\n");
 //    printf("[FONCTION afficherEtuInfo]\n\n");
 //    etu = chercher_Etu(abr, "Johnson", "Alice");
 //    afficherEtuInfo(etu);
+//    printf("\n");
 
-    //Êä³öÈ«ÌåÑ§ÉúµÄ¿Î³ÌĞÅÏ¢£¨²âÊÔº¯Êı[afficherInscriptions]£©
-
-//    //²é¿´Ñ§ÉúÊÇ·ñ×¢²áÁËÄ³Ò»¿Î³Ì£¨²âÊÔº¯Êı[rechercherUVdEtu]£©
+//    //æŸ¥çœ‹å­¦ç”Ÿæ˜¯å¦æ³¨å†Œäº†æŸä¸€è¯¾ç¨‹ï¼ˆæµ‹è¯•å‡½æ•°[rechercherUVdEtu]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION rechercherUVdEtu]\n\n");
 //    etu = chercher_Etu(abr, "Martin", "Jacques");
 //    printf("Martin Jacques est inscrit a HIT102 ? [%d]\n", rechercherUVdEtu(etu, "HIT102"));
 //    printf("Martin Jacques est inscrit a MCH102 ? [%d]\n", rechercherUVdEtu(etu,  "MCH102"));
-//    return 0;
 
-//    //²é¿´×¢²áÁËÄ³Ò»¿Î³ÌµÄËùÓĞÑ§Éú£¨²âÊÔº¯Êı[afficherInscriptionsUV]£©
+//    //æŸ¥çœ‹æ³¨å†Œäº†æŸä¸€è¯¾ç¨‹çš„æ‰€æœ‰å­¦ç”Ÿï¼ˆæµ‹è¯•å‡½æ•°[afficherInscriptionsUV]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION afficherInscriptionsUV]\n\n");
-//    printf("Etudiants inscrits ¨¤ BIO501 : \n");
+//    printf("Etudiants inscrits Ã  BIO501 : \n");
 //    afficherInscriptionsUV(abr, "BIO501");
-//    printf("\nEtudiants inscrits ¨¤ ZZZ999 : \n");
+//    printf("\nEtudiants inscrits Ã  ZZZ999 : \n");
 //    afficherInscriptionsUV(abr, "ZZZ999");
 
-//    //²é¿´ĞÕÃû°´×ÖÄ¸ÅÅĞò×î¿¿Ç°µÄÑ§Éú£¨²âÊÔº¯Êı[obtenirMinimumEtu]£©
+//    //æŸ¥çœ‹å§“åæŒ‰å­—æ¯æ’åºæœ€é å‰çš„å­¦ç”Ÿï¼ˆæµ‹è¯•å‡½æ•°[obtenirMinimumEtu]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION obtenirMinimumEtu]\n\n");
 //    etu = obtenirMinimumEtu(abr);
 //    printf("Etu minimum : %s %s\n", etu->nom, etu->prenom);
 
-//    //²é¿´Ä³Ñ§Éú½ÚµãµÄ¸¸½Úµã£¨²âÊÔº¯Êı[obtenirParent]£©
+//    //æŸ¥çœ‹æŸå­¦ç”ŸèŠ‚ç‚¹çš„çˆ¶èŠ‚ç‚¹ï¼ˆæµ‹è¯•å‡½æ•°[obtenirParent]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION obtenirParent]\n\n");
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
-//    printf("Noeud parent de la racine : ");
+//    printf("Noeud parent de Doe John : ");
 //    etu = obtenirParent(abr, "Doe", "John");
-//    printf("Adresse du parent : %p\n\n", etu);
+//    if(etu)
+//        printf("%s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Adresse du parent : %p\n\n", etu);
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    printf("Noeud parent de Bott Emmy : ");
 //    etu = obtenirParent(abr, "Bott", "Emmy");
-//    printf("%s %s\n\n", etu->nom, etu->prenom);
+//    if(etu)
+//        printf("%s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Adresse du parent : %p\n\n", etu);
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    printf("Noeud parent de Fac Kittel : ");
 //    etu = obtenirParent(abr, "Fac", "Kittel");
-//    printf("%s %s\n\n", etu->nom, etu->prenom);
+//    if(etu)
+//        printf("%s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Adresse du parent : %p\n\n", etu);
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    printf("Noeud parent de ZZZ ZZZ : ");
 //    etu = obtenirParent(abr, "ZZZ", "ZZZ");
-//    printf("Adresse du parent : %p\n\n", etu);
+//    if(etu)
+//        printf("%s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Adresse du parent : %p\n\n", etu);
 
-//    //²é¿´Ä³Ñ§Éú½ÚµãµÄºó¼Ì½Úµã£¨²âÊÔº¯Êı[obtenirSuccesseur]£©
+//    //æŸ¥çœ‹æŸå­¦ç”ŸèŠ‚ç‚¹çš„åç»§èŠ‚ç‚¹ï¼ˆæµ‹è¯•å‡½æ•°[obtenirSuccesseur]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION obtenirSuccesseur]\n\n");
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    etu = chercher_Etu(abr, "Doe", "John");
 //    etu = obtenirSuccesseur(abr, etu);
-//    printf("Successeur de Doe John : %s %s\n\n", etu->nom, etu->prenom);
+//    if(etu)
+//        printf("Successeur de Doe John : %s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Successeur de Doe John : %p\n\n", etu);
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    etu = chercher_Etu(abr, "Fac", "Kittel");
 //    etu = obtenirSuccesseur(abr, etu);
-//    printf("Successeur de Fac Kittel : %s %s\n\n", etu->nom, etu->prenom);
+//    if(etu)
+//        printf("Successeur de Fac Kittel : %s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Successeur de Fac Kittel : %p\n\n", etu);
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    etu = chercher_Etu(abr, "Zackin", "Zoma");
 //    etu = obtenirSuccesseur(abr, etu);
-//    printf("Successeur de Zackin Zoma : %p\n\n", etu);
+//    if(etu)
+//        printf("Successeur de Zackin Zoma : %s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Successeur de Zackin Zoma : %p\n\n", etu);
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
 //    etu = chercher_Etu(abr, "ZZZ", "ZZZ");
 //    etu = obtenirSuccesseur(abr, etu);
-//    printf("Successeur de ZZZ ZZZ : %p\n\n", etu);
+//    if(etu)
+//        printf("Successeur de ZZZ ZZZ : %s %s\n\n", etu->nom, etu->prenom);
+//    else
+//        printf("Successeur de ZZZ ZZZ : %p\n\n", etu);
 
-//    //½«Ä³Ñ§Éú×¢²áµÄ¿Î³ÌÉ¾³ı£¨²âÊÔº¯Êı[supprimerInscription]£©
+//    //å°†æŸå­¦ç”Ÿæ³¨å†Œçš„è¯¾ç¨‹åˆ é™¤ï¼ˆæµ‹è¯•å‡½æ•°[supprimerInscription]ï¼‰
+//    afficherInscriptions(abr); /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION supprimerInscription]\n\n");
 //    printf("- - - - - - - - - - - - - - - - - - - - \n\n");
-//    printf("* Supprimer l¡¯inscription de Bott Emmy a HIT102 :\n");
+//    printf("* Supprimer l'inscription de Bott Emmy a HIT102 :\n");
 //    abr = supprimerInscription(abr, "Bott", "Emmy", "HIT102");
 //    etu = chercher_Etu(abr, "Bott", "Emmy");
 //    afficherEtuInfo(etu);
 //    printf("\n\n- - - - - - - - - - - - - - - - - - - - \n\n");
-//    printf("* Supprimer l¡¯inscription de Dupond Marcel a MCH102 :\n");
+//    printf("* Supprimer l'inscription de Dupond Marcel a MCH102 :\n");
 //    abr = supprimerInscription(abr, "Dupond", "Marcel", "MCH102");
 //    afficherInscriptions(abr);
 //    printf("\n- - - - - - - - - - - - - - - - - - - - \n\n");
-//    printf("* Supprimer l¡¯inscription de Fac Kittel a ART130 :\n");
+//    printf("* Supprimer l'inscription de Fac Kittel a ART130 :\n");
 //    abr = supprimerInscription(abr, "Fac", "Kittel", "ART130");
 //    etu = chercher_Etu(abr, "Fac", "Kittel");
 //    afficherEtuInfo(etu);
-//    printf("\n\n* Supprimer l¡¯inscription de Fac Kittel a BIO501 :\n");
+//    printf("\n\n* Supprimer l'inscription de Fac Kittel a BIO501 :\n");
 //    abr = supprimerInscription(abr, "Fac", "Kittel", "BIO501");
 //    afficherInscriptions(abr);
 //    printf("\n- - - - - - - - - - - - - - - - - - - - \n\n");
-//    printf("* Supprimer l¡¯inscription de Tom Effos a MAT091 :\n");
+//    printf("* Supprimer l'inscription de Tom Effos a MAT091 :\n");
 //    abr = supprimerInscription(abr, "Tom", "Effos", "MAT091");
 //    etu = chercher_Etu(abr, "Tom", "Effos");
 //    afficherEtuInfo(etu);
-//    printf("\n\n* Supprimer l¡¯inscription de Fac Kittel a ENG159 :\n");
+//    printf("\n\n* Supprimer l'inscription de Fac Kittel a ENG159 :\n");
 //    abr = supprimerInscription(abr, "Tom", "Effos", "ENG159");
 //    afficherInscriptions(abr);
 
-//    //½«Ä³Ñ§Éú×¢²áµÄËùÓĞ¿Î³ÌÉ¾³ı£¨²âÊÔº¯Êı[supprimerTousLesInscriptions]£©
+//    //å°†æŸå­¦ç”Ÿæ³¨å†Œçš„æ‰€æœ‰è¯¾ç¨‹åˆ é™¤ï¼ˆæµ‹è¯•å‡½æ•°[supprimerTousLesInscriptions]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION supprimerTousLesInscriptions]\n\n");
 //    abr = supprimerTousLesInscriptions(abr, "Doe", "John");
 //    afficherInscriptions(abr);
 
-//    //½«Ä³Ñ§Éú×¢²áµÄËùÓĞ¿Î³ÌÉ¾³ı£¨²âÊÔº¯Êı[supprimerTousLesInscriptions]£©
-//    printf("\n\n--------------------------------------------------\n\n");
-//    printf("[FONCTION supprimerTousLesInscriptions]\n\n");
-//    abr = supprimerTousLesInscriptions(abr, "Doe", "John");
-//    afficherInscriptions(abr);
-
-//    //ÊÍ·ÅËùÓĞ¶¯Ì¬·ÖÅäµÄÄÚ´æ¿Õ¼ä£¨²âÊÔº¯Êı[libererArbre]£©
+//    //é‡Šæ”¾æ‰€æœ‰åŠ¨æ€åˆ†é…çš„å†…å­˜ç©ºé—´ï¼ˆæµ‹è¯•å‡½æ•°[libererArbre]ï¼‰
 //    printf("\n\n--------------------------------------------------\n\n");
 //    printf("[FONCTION libererArbre]\n\n");
 //    abr = libererArbre(abr);
 //    afficherInscriptions(abr);
-    printf("\n--------------------------------------------------\n\n");
     return 0;
 
 }
