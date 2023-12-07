@@ -24,40 +24,6 @@ typedef T_Noeud * T_Arbre;
 
 /*----------------------------------------------------------------------------------------------------*/
 
-/*T_Arbre ajouterEtu(T_Arbre arbre, T_Noeud * ajoutetu){
-
-    T_Noeud * tete = arbre ;
-    if( comparer_Etu ( tete , ajoutetu->nom, ajoutetu->prenom) == 0 ){
-            printf("l'etudiant est deja existe!!!\n");
-            return arbre;
-        }
-    else if(comparer_Etu ( tete , ajoutetu->nom, ajoutetu->prenom) > 0 || tete == NULL)
-    //comparer la premier etu 1.apres le ajout || 2.NULL
-    {
-        ajoutetu->suivant = tete;
-        return ajoutetu; //changer le point tete;头部指针已经改变，所以不能传arbre了
-    }
-
-
-
-    while( tete->suivant != NULL && comparer_Etu ( tete , ajoutetu->nom, ajoutetu->prenom) < 0 )
-    {
-        tete = tete->suivant;
-    }
-    if(tete->suivant == NULL)
-    {
-        tete->suivant =ajoutetu; //la nouvelle ajouter est la derniere
-    }
-    else
-    {
-        ajoutetu->suivant = tete->suivant;
-        tete->suivant = ajoutetu;
-    }
-
-    return arbre;
-
-    }
-}*/
 
 void convertmaj(char * str);
 
@@ -94,6 +60,7 @@ void afficherInscriptions(T_Arbre abr);
 
 /*----------------------------------------------------------------------------------------------------*/
 
+int calcul_nb_liste(T_Noeud* etu, T_Element** liste);
 int rechercherUVdEtus(T_Noeud* etu, char *code);
 
 /*----------------------------------------------------------------------------------------------------*/

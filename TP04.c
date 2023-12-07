@@ -53,7 +53,7 @@ T_Element * ajouterInscription(char * nom , char * prenom ,T_Element* liste, cha
         free(ajout);
     }
     else if( compare < 0){
-        tete->suivant = ajout;//处在最后一个退出是因为第一个条件退出的
+        tete->suivant = ajout;//Se trouve à la fin, la sortie est due à la première condition de sortie.
     }
     else{
         pre->suivant = ajout;
@@ -64,13 +64,7 @@ T_Element * ajouterInscription(char * nom , char * prenom ,T_Element* liste, cha
 }
 /*----------------------------------------------------------------------------------------------------*/
 
-//int comparer_Etu ( T_Noeud* etu , char* nom, char* prenom)
-//{
-//    int prenomcmp = strcmp( etu->prenom , prenom) ;
-//    if (prenomcmp == 0)
-//        return strcmp(etu->nom , nom);
-//    return prenomcmp;//return 1:ajout est avant ; -1:apres
-//}
+
 
 int comparer_Etu( T_Noeud* etu , char* nom, char* prenom)
 {
@@ -166,7 +160,7 @@ void convertmaj(char * str){
     }
 }
 
-
+/*----------------------------------------------------------------------------------------------------*/
 
 //charger dans l’ABR un fichier texte comportant une liste d’inscriptions
 T_Arbre chargerFichier(T_Arbre abr, char *filename){
@@ -235,7 +229,7 @@ void afficherInscriptions(T_Arbre abr)
 /*----------------------------------------------------------------------------------------------------*/
 
 //déterminer si un étudiant « etu » est inscrit à un UV de code « code »
-int rechercherUVdEtu(T_Noeud* etu, char* code)
+/*int rechercherUVdEtu(T_Noeud* etu, char* code)
 {
     if(etu) //si le nœud de T_Noeud « etu » n'est pas vide
     {
@@ -248,6 +242,43 @@ int rechercherUVdEtu(T_Noeud* etu, char* code)
         }
     }
     return 0;
+}*/
+
+int calcul_nb_liste(T_Noeud* etu, T_Element** liste) {
+    T_Element* tmp = etu->listeInscriptions;
+    int n = 0;
+
+    // transp
+    while (tmp != NULL) {
+        liste[n++] = tmp;
+        tmp = tmp->suivant;
+    }
+
+    return n;
+}
+
+int rechercherUVdEtu(T_Noeud* etu, char* code) {
+    // creer un array pour obtenir le code;
+    T_Element* liste[100];
+    int size = calcul_nb_liste(etu, liste);
+
+    int low = 0;
+    int high = size - 1;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        int cmpResult = strcmp(liste[mid]->code_uv, code);
+
+        if (cmpResult == 0) {
+            return 1; // on a trouve l'etu
+        } else if (cmpResult < 0) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return 0; // on n'a trouve pas
 }
 
 /*----------------------------------------------------------------------------------------------------*/

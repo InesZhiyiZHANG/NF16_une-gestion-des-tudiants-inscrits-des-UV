@@ -10,17 +10,6 @@ int main()
     char indicateur = 0;
     char* p_indicateur = &indicateur;
 
-//    abr = chargerFichier(abr, "etu_list.txt"); ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//    printf("%s",abr->prenom);
-//    printf("\n\n--------------------------------------------------\n\n");
-//    printf("[FONCTION afficherInscriptions]\n\n");
-//    afficherInscriptions(abr);
-//    printf("\n");
-//    if(abr == NULL){
-//        printf("!!!!!!!!!!!!!!\nvide!\n");
-//    }
-
     char choix = '0';
     while (choix != '6')
     {
